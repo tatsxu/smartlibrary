@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Select a Book</title>
+<style>
+  .logo {width: 90px; position: absolute; top: 5px; left: 50px;}
+  header {position: relative;}
+  body{font-family:Arial;background:#eef5ff;margin:0;padding:20px;}
+  h1{text-align:center;color:#003366;}
+  .category{background:#003366;color:white;padding:10px;border-radius:6px;margin-top:25px;}
+  .book{background:white;padding:12px;margin:6px 0;border-radius:6px;cursor:pointer;
+        border:1px solid #ccc;}
+  .book:hover{background:#dfe9ff;}
+  .unavailable{
+    color:red;
+    cursor:not-allowed;
+    opacity:0.6;
+    background:#ffe5e5;
+  }
+</style>
+</head>
+<body>
+
+<h1>
+  <img src="QCU_Logo.png" class="logo" alt="QCU Logo">
+  📚 Select a Book to Borrow | Quezon City University</h1>
+
+<script>
+function selectBook(title){
+  const userData = JSON.parse(localStorage.getItem("tempBorrowInfo") || "{}");
+
+  userData.bookTitle = title;
+
+  localStorage.setItem("bookInfo", JSON.stringify(userData));
+
+  let rentals = JSON.parse(localStorage.getItem("bookRentals") || "[]");
+
+  rentals.push({
+    studentName: userData.studentName,
+    studentID: userData.studentID,
+    course: userData.course,
+    year: userData.year,
+    bookTitle: title,
+    confirmed: false
+  });
+
+  localStorage.setItem("bookRentals", JSON.stringify(rentals));
+
+  window.location.href = "confirmationB.html";
+}
+const categories = {
+  "Computer Animation": [
+    "Multimedia with Macromedia Flash MX / Severino Martinez",
+    "Intermediate: The Modeling and Animation Handbook / Marc-André Guindon",
+    "Inside Maya 5 / Mark Adams, Erick Miller, Max Sims",
+    "Flash CS4 for Dummies / Ellen Finkelstein, Gurdy Leete",
+    "Flash Site Workshop / Ken Milburn",
+    "Motion: Revolutionary Motion Graphics / Damian Allen",
+    "Flash MX Video / Kristian Besley, Hoss Gifford, Brian Monnone, Todd Marks",
+    "Lightwave 6.5 Magic / Dan Ablan"
+  ],
+  "Computer Science": [
+    "Fundamentals of Java / Kenneth Lambert & Martin Osborne",
+    "Systems Analysis and Design 9th Ed. / Kendall & Kendall",
+    "Data Structures and Algorithms in C++ / Adam Drozdek",
+    "Computer Fundamentals / Dennis T. Fajardo",
+    "Introduction to Computers & Information Processing / Larry Long",
+    "Understanding Computers: Today & Tomorrow / Parker, Morley, Miketta"
+  ],
+  "Database Management": [
+    "Professional Microsoft SQL Server 2016 / Paul Turley",
+    "Database Management System / Balite, Bernardino, Custodio, Mendoza",
+    "An Introduction to Database Systems / C.J. Date",
+    "Using DBASE III Plus / Edward Jones",
+    "Microsoft Access 2000 Bible / Prague & Irwin",
+    "Principles of Database Management / James Martin",
+    "Modern Database Management / Hoffer, Ramesh, Topi",
+    "Understanding DBASE III / Alan Simpson"
+  ],
+  "Logic": [
+    "Programming Logic & Design 8th Ed. / Joyce Farrell",
+    "Introduction to Logic / Irving Copi",
+    "Logic: The Art of Reasoning / Alma Santiago",
+    "Essential Logic / Arnel Malitao",
+    "Teaching and Learning Logic / Jose R. Joven",
+    "Introduction to Logic / Corazon Cruz",
+    "Introduction to Logic & Computer Design / Marcovitz",
+    "Logic for Beginners / Torres & Hernandez"
+  ],
+  "Education": [
+    "Methods of Research / Salmorin & Achas",
+    "Personal Development / Magalona & Sadsad",
+    "Hope Health: Sports for Life Book 2 / Sibug et al.",
+    "Child and Adolescent Learners / Corpuz et al.",
+    "Physical Education & Health / 3G E-Learning",
+    "Field Study 2 / Brawner & Caubic",
+    "Field Study 1 / Leus & De Guzman",
+    "Teacher & Community Leadership / Serrano & Cajigal"
+  ]
+};
+
+let unavailableBooks = JSON.parse(localStorage.getItem("unavailableBooks") || "[]");
+
+function renderBooks(){
+  const container = document.body;
+
+  for(const category in categories){
+    const catDiv = document.createElement("div");
+    catDiv.className = "category";
+    catDiv.textContent = category;
+    container.appendChild(catDiv);
+
+    categories[category].forEach(title => {
+      const book = document.createElement("div");
+      book.className = "book";
+      book.textContent = title;
+
+      if(unavailableBooks.includes(title)){
+        book.classList.add("unavailable");
+        book.onclick = () => alert("❌ This book is currently unavailable.");
+      } 
+      else {
+        book.onclick = () => selectBook(title);
+      }
+
+      container.appendChild(book);
+    });
+  }
+}
+
+renderBooks();
+</script>
+
+</body>
+</html>

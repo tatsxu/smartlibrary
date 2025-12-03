@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Rental Confirmed</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f3f3;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .logo {
+      width: 90px;
+      position: absolute;
+      top: 5px;
+      left: 50px;
+    }
+    header {
+      position: relative;
+    }
+
+    header {
+      background-color: #0052cc;
+      color: white;
+      padding: 15px 0;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    header p {
+      text-align: center;
+      margin: 3px 0 0;
+      font-size: 14px;
+    }
+
+    nav {
+      background-color: #1e64d2;
+      padding: 10px 0;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 16px;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      background-color: white;
+      width: 420px;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      font-size: 36px;
+      margin-top: 40px;
+      font-weight: bold;
+    }
+
+    h3 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      text-align: left;
+      margin: 5px 0;
+      font-size: 15px;
+    }
+
+    hr {
+      border: 1px solid #999;
+      margin: 15px 0;
+    }
+
+    .footer-note {
+      font-size: 12px;
+      margin-top: 20px;
+      color: #333;
+    }
+
+    .home-btn {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 12px 20px;
+      background-color: #0052cc;
+      color: white;
+      font-weight: bold;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .home-btn:hover {
+      background-color: #003d99;
+    }
+
+    footer {
+      background-color: #003d99;
+      color: white;
+      padding: 10px 0;
+      font-size: 14px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    ol {
+  list-style-position: inside;
+  margin-left: 0;
+  padding-left: 0;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="QCU_Logo.png" class="logo" alt="QCU Logo">
+    <h1>Smart Library & Room System | Quezon City University</h1>
+    <p>Manage your books and room reservation with ease</p>
+  </header>
+
+  <nav>
+    <a href="home.html">Home</a>
+    <a href="rooms.html">Room</a>
+  </nav>
+
+  <h2>Book Rental Confirmed!</h2>
+
+  <div class="container">
+    <h3>BOOK RENTALS RECEIPT</h3>
+    <p><b>Date of Issue:</b> <span id="dateIssued"></span></p>
+    <p><b>Booked By:</b> <span id="studentName"></span></p>
+    <p><b>Student ID:</b> <span id="studentID"></span></p>
+    <p><b>Course/Department:</b> <span id="course"></span></p>
+    <hr>
+    <h3>Book Rental Details</h3>
+    <hr>
+    <h4>Book Rented:</h4>
+    <ol id="bookList">
+      <li id="bookTitle">Loading...</li>
+    </ol>
+    <h4>Library: Quezon City University Library, IL 2nd Floor</h4>
+
+    <p class="footer-note">A copy of this receipt has been sent to your email.</p>
+
+    <a href="home.html" class="home-btn">Back to Home</a>
+  </div>
+
+  <footer>
+    © 2025 Smart Library & Room System
+  </footer>
+
+  <script>
+const bookInfo = JSON.parse(localStorage.getItem("bookInfo"));
+
+const today = new Date();
+document.getElementById("dateIssued").textContent =
+  today.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+if (bookInfo) {
+  document.getElementById("studentName").textContent = bookInfo.studentName;
+  document.getElementById("studentID").textContent = bookInfo.studentID;
+  document.getElementById("course").textContent = bookInfo.course;
+  document.getElementById("bookList").innerHTML = `<li>${bookInfo.bookTitle}</li>`;
+} else {
+  document.getElementById("bookList").innerHTML = "<li>No book information found.</li>";
+}
+</script>
+
+
+</body>
+</html>

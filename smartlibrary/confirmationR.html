@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reservation Confirmed</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .logo {
+      width: 90px;
+      position: absolute;
+      top: 5px;
+      left: 50px;
+    }
+    header {
+      position: relative;
+    }
+
+    body {
+      background-color: #f8f3f3;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #0047ab;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+    }
+
+    header p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    nav {
+      background-color: #0053c2;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #dcdcdc;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    .receipt {
+      background-color: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 500px;
+      text-align: left;
+    }
+
+    .receipt h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .receipt hr {
+      margin: 15px 0;
+      border: none;
+      border-top: 2px solid #ddd;
+    }
+
+    .section-title {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .note {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 0.85rem;
+      color: #555;
+    }
+
+    .home-btn {
+      display: inline-block;
+      background-color: #0047ab;
+      color: white;
+      text-decoration: none;
+      padding: 10px 25px;
+      border-radius: 8px;
+      margin-top: 25px;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .home-btn:hover {
+      background-color: #003c91;
+    }
+
+    footer {
+      background-color: #0047ab;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 0.9rem;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="QCU_Logo.png" class="logo" alt="QCU Logo">
+    <h1>Smart Library & Room System | Quezon City University</h1>
+    <p>Manage your books and room reservation with ease</p>
+  </header>
+
+  <nav>
+    <a href="home.html">Home</a>
+    <a href="library.html">Books</a>
+  </nav>
+
+  <main>
+    <h2>Reservation Confirmed!</h2>
+    <div class="receipt">
+      <h3>LIBRARY COLLABORATIVE ROOM RESERVATION RECEIPT</h3>
+      <p><strong>Date of Issue:</strong> <span id="issueDate"></span></p>
+      <p><strong>Booked By:</strong> <span id="studentName"></span></p>
+      <p><strong>Student ID:</strong> <span id="studentId"></span></p>
+      <p><strong>Course/Department:</strong> <span id="course"></span></p>
+      <p><strong>Year Level:</strong> <span id="year"></span></p>
+
+      <hr />
+
+      <div class="section-title">Reservation Details</div>
+      <p><strong>Room:</strong> <span id="room"></span></p>
+      <p><strong>Booking Date:</strong> <span id="date"></span></p>
+      <p><strong>Start Time:</strong> <span id="time"></span></p>
+      <p><strong>Total Duration:</strong> 2 Hours (Max Limit)</p>
+    </div>
+
+     <div class="section-title">Participants (10)</div>
+       <ul id="participantList" style="padding-left: 20px; list-style-type: disc;"></ul>
+
+
+    <div class="note">
+      A copy of the receipt has been sent to your email.
+    </div>
+
+    <a href="home.html" class="home-btn">Back to Home</a>
+  </main>
+
+  <footer>
+    © 2025 Smart Library & Room System
+  </footer>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+  const data = JSON.parse(localStorage.getItem('roomBookingData'));
+  if (data) {
+    document.getElementById('issueDate').textContent = data.issueDate;
+    document.getElementById('studentName').textContent = data.studentName;
+    document.getElementById('studentId').textContent = data.studentId;
+    document.getElementById('course').textContent = data.course;
+    document.getElementById('year').textContent = data.year;
+    document.getElementById('room').textContent = data.room;
+    document.getElementById('date').textContent = data.date;
+    document.getElementById('time').textContent = data.time;
+
+    const participantListEl = document.getElementById('participantList');
+    data.participants.forEach((p, index) => {
+      const li = document.createElement('li');
+      li.textContent = p;
+      participantListEl.appendChild(li);
+    });
+  }
+});
+
+  </script>
+</body>
+</html>

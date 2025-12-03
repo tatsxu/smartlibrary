@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Room Booking</title>
+  <style>
+    .logo {width: 90px; position: absolute; top: 5px; left: 50px;}
+    header {position: relative;}
+    body { margin:0; font-family:Arial,sans-serif; background:linear-gradient(to bottom right,#f0f7ff,#ffffff); color:#333; }
+    header { background:#003366; color:white; padding:20px; text-align:center; font-size:22px; font-weight:bold; }
+    nav { background:#004aad; display:flex; justify-content:center; padding:10px; }
+    nav a { color:white; margin:0 15px; text-decoration:none; font-weight:bold; }
+    nav a:hover { text-decoration:underline; }
+    main { display:flex; justify-content:center; align-items:center; padding:60px 20px; }
+    .box { background:white; padding:30px; border-radius:15px; box-shadow:0 6px 15px rgba(0,0,0,0.1); width:420px; text-align:center; }
+    label { font-weight:bold; display:block; margin-top:15px; text-align:left; }
+    input, select, textarea { width:100%; padding:10px; margin-top:5px; border-radius:8px; border:1px solid #ccc; resize:none; }
+    button { margin-top:20px; background:#004aad; color:white; border:none; padding:12px 20px; border-radius:8px; font-weight:bold; cursor:pointer; width:100%; }
+    button:hover { background:#0066ff; }
+    .note { font-size:12px; color:red; text-align:left; margin-top:5px; }
+  </style>
+</head>
+<body>
+  
+  <header>
+    <img src="QCU_Logo.png" class="logo" alt="QCU Logo">
+    🏠 Room Booking | Quezon City University</header>
+  <nav>
+    <a href="home.html">Home</a>
+    <a href="library.html">Library</a>
+  </nav>
+  <main>
+    <div class="box">
+      <h2>Reserve a Room</h2>
+      <form id="roomBookingForm" action="book_room.php" method="POST">
+        <label>Student ID</label>
+        <input type="text" id="studentId" name="student_id" required>
+
+        <label>Student Name</label>
+        <input type="text" id="studentName" name="student_name" required>
+
+        <label>Course</label>
+        <input type="text" id="course" name="course" required>
+
+        <label>Year</label>
+        <select id="year" name="year" required>
+          <option value="">-- Select Year --</option>
+          <option>1st Year</option>
+          <option>2nd Year</option>
+          <option>3rd Year</option>
+          <option>4th Year</option>
+        </select>
+
+        <label>Select Room</label>
+        <select id="room" name="room" required>
+          <option value="">-- Choose a Room --</option>
+        </select>
+
+        <label>Select Date</label>
+        <input type="date" id="date" name="date" required>
+
+        <label>Select Time</label>
+        <input type="time" id="time" name="time" required>
+
+        <label>List of Participants (10 only)</label>
+        <textarea id="participants" name="participants" rows="5" placeholder="Enter one participant per line..." required></textarea>
+        <div class="note">⚠ If one or more participants is absent, the room rental will be voided.</div>
+
+        <button type="submit">Book Room</button>
+      </form>
+    </div>
+  </main>
+
+  <footer>© 2025 SmartLibrary Project | Information Management</footer>
+
+  <script>
+const rooms = ["Room 1","Room 2","Room 3","Room 4"];
+
+function renderRooms() {
+  const roomSelect = document.getElementById('room');
+  roomSelect.innerHTML = '<option value="">-- Choose a Room --</option>';
+
+  const roomBookings = JSON.parse(localStorage.getItem('roomBookings') || '[]');
+  const selectedDate = document.getElementById('date').value;
+
+  rooms.forEach(roomName => {
+    const opt = document.createElement('option');
+    opt.value = roomName;
+
+    if (selectedDate) {
+      const booked = roomBookings.find(r => r.room === roomName && r.confirmed && r.date === selectedDate);
+      if (booked) {
+        const startTime = new Date(booked.date + 'T' + booked.time);
+        const endTime = new Date(startTime.getTime() + 2*60*60*1000);
+        const now = new Date();
+        if (now < endTime) {
+          opt.text = `${roomName} ⚠ Not available until ${endTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+          opt.disabled = true;
+        } else {
+          opt.text = roomName;
+        }
+      } else {
+        opt.text = roomName;
+      }
+    } else {
+      opt.text = roomName;
+    }
+
+    roomSelect.appendChild(opt);
+  });
+}
+
+renderRooms();
+document.getElementById('date').addEventListener('change', renderRooms);
+
+document.getElementById('roomBookingForm').addEventListener('submit', function(e){
+  e.preventDefault();
+
+  let participants = document.getElementById('participants').value.trim().split("\n");
+  participants = participants.filter(p => p.trim() !== "");
+  if (participants.length !== 10) {
+    alert("You must list EXACTLY 10 participants.\nCurrently: " + participants.length);
+    return;
+  }
+
+  const studentId = document.getElementById('studentId').value.trim();
+  const studentName = document.getElementById('studentName').value.trim();
+  const course = document.getElementById('course').value.trim();
+  const year = document.getElementById('year').value;
+  const selectedRoom = document.getElementById('room').value;
+  const date = document.getElementById('date').value;
+  const time = document.getElementById('time').value;
+
+  if (!studentId || !studentName || !course || !year || !selectedRoom || !date || !time) {
+    alert("Please fill all required fields.");
+    return;
+  }
+
+  const bookingData = {
+    studentId,
+    studentName,
+    course,
+    year,
+    room: selectedRoom,
+    date,
+    time,
+    participants,
+    issueDate: new Date().toLocaleDateString(),
+    confirmed: false,
+    requested_at: new Date().toISOString()
+  };
+
+  const bookings = JSON.parse(localStorage.getItem('roomBookings') || '[]');
+  bookings.push(bookingData);
+  localStorage.setItem('roomBookings', JSON.stringify(bookings));
+
+  localStorage.setItem('roomBookingData', JSON.stringify({
+    studentId: bookingData.studentId,
+    studentName: bookingData.studentName,
+    course: bookingData.course,
+    year: bookingData.year,
+    room: bookingData.room,
+    date: bookingData.date,
+    time: bookingData.time,
+    participants: bookingData.participants,
+    issueDate: bookingData.issueDate
+  }));
+
+  window.location.href = 'confirmationR.html';
+});
+</script>
+
+</body>
+</html>

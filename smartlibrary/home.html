@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Library & Room Booking</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .logo {
+      width: 90px;
+      position: absolute;
+      top: 5px;
+      left: 50px;
+    }
+    header {
+      position: relative;
+    }
+
+    body {
+      background: #f5f9ff;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #004aad;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      padding: 40px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 250px;
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #004aad;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #0066ff;
+    }
+
+    footer {
+      background: #004aad;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="QCU_Logo.png" class="logo" alt="QCU Logo">
+    <h1>🏫 Smart Library & Room System | Quezon City University</h1>
+    <p>Manage your books and room reservations with ease</p>
+  </header>
+
+  <main>
+    <div class="card">
+      <h2>📚 Library System</h2>
+      <a href="library.html" class="btn">Go to Library</a>
+    </div>
+
+    <div class="card">
+      <h2>🏠 Room Booking</h2>
+      <a href="rooms.html" class="btn">Book a Room</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 SmartLibrary Project | Information Management</p>
+  </footer>
+</body>
+</html>

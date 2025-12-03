@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<style>
+  .logo {width: 90px; position: absolute; top: 5px; left: 50px;}
+  header {position: relative;}
+  body { font-family: Arial, sans-serif; margin: 0; background: #eef5ff; }
+  header { background: #003366; color: white; text-align: center; padding: 20px; font-size: 22px; font-weight: bold; }
+  nav { background: #004aad; text-align: center; padding: 10px; }
+  nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: bold; }
+  nav a:hover { text-decoration: underline; }
+  main { padding: 30px; }
+  h2 { color: #003366; }
+  .section { background: white; padding: 20px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th, td { padding: 12px; border: 1px solid #ccc; text-align: left; }
+  th { background: #004aad; color: white; }
+  button { padding: 6px 12px; background: #004aad; color: white; border: none; border-radius: 6px; cursor: pointer; margin-right: 5px; }
+  button:hover { background: #0066ff; }
+  .unavailable { color: red; font-weight: bold; }
+</style>
+</head>
+<body>
+  <header>
+    <img src="QCU_Logo.png" class="logo" alt="QCU Logo">
+    📋 Admin Dashboard | Quezon City University</header>
+  <nav>
+    <a href="home.html">Home</a>
+    <a href="listofbooks.html">Library</a>
+    <a href="rooms.html">Room Booking</a>
+  </nav>
+  <main>
+
+    <div class="section">
+      <h2>Pending Book Rentals</h2>
+      <table id="bookTable">
+        <thead>
+          <tr>
+            <th>Book Title</th>
+            <th>User</th>
+            <th>Student ID</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Pending Room Bookings</h2>
+      <table id="roomTable">
+        <thead>
+          <tr>
+            <th>Room</th>
+            <th>User</th>
+            <th>Student ID</th>
+            <th>Date</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
+
+<script>
+  function getBooks() { return JSON.parse(localStorage.getItem('bookRentals') || '[]'); }
+  function getRooms() { return JSON.parse(localStorage.getItem('roomBookings') || '[]'); }
+  function saveBooks(books) { localStorage.setItem('bookRentals', JSON.stringify(books)); }
+  function saveRooms(rooms) { localStorage.setItem('roomBookings', JSON.stringify(rooms)); }
+
+  function getUnavailable() { return JSON.parse(localStorage.getItem('unavailableBooks') || '[]'); }
+  function saveUnavailable(list) { localStorage.setItem('unavailableBooks', JSON.stringify(list)); }
+
+  function renderBooks() {
+    const books = getBooks();
+    const tbody = document.querySelector('#bookTable tbody');
+    tbody.innerHTML = '';
+
+    books.forEach((b, index) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${b.bookTitle}</td>
+        <td>${b.studentName}</td>
+        <td>${b.studentID || b.studentId || ''}</td>
+        <td>
+          ${b.confirmed ? '<span class="unavailable">Confirmed</span>' : `<button onclick="confirmBook(${index})">Confirm</button>`}
+          <button onclick="returnBook(${index})">Return</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderRooms() {
+    const rooms = getRooms();
+    const tbody = document.querySelector('#roomTable tbody');
+    tbody.innerHTML = '';
+
+    const now = new Date();
+
+    rooms.forEach((r, index) => {
+      const studentId = r.studentId || r.studentID || r.student_id || '';
+      const studentName = r.studentName || r.student_name || '';
+
+      const startTime = new Date(r.date + 'T' + r.time);
+      const endTime = new Date(startTime.getTime() + 2*60*60*1000);
+      const nowTime = now.getTime();
+      const isUnavailable = r.confirmed && nowTime < endTime.getTime();
+      const endTimeStr = endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${r.room} ${isUnavailable ? '(Not available until ' + endTimeStr + ')' : ''}</td>
+        <td>${studentName}</td>
+        <td>${studentId}</td>
+        <td>${r.date}</td>
+        <td>${r.time}</td>
+        <td>${endTimeStr}</td>
+        <td>
+          ${r.confirmed ? '<span class="unavailable">Confirmed</span>' : `<button onclick="confirmRoom(${index})">Confirm</button>`}
+          <button onclick="completeRoom(${index})">Complete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function confirmBook(index) {
+    const books = getBooks();
+    const item = books[index];
+    if (!item) return alert('Item not found.');
+
+    try {
+      const form = new FormData();
+      form.append('student_id', item.studentID || item.studentId || '');
+      form.append('student_name', item.studentName || '');
+      form.append('course', item.course || '');
+      form.append('year', item.year || '');
+      form.append('book_title', item.bookTitle || '');
+      form.append('date_borrowed', item.requested_at ? item.requested_at.split('T')[0] : '');
+
+      const res = await fetch('confirm_book.php', { method: 'POST', body: form });
+      const data = await res.json();
+
+      if (data.success) {
+        books[index].confirmed = true;
+        saveBooks(books);
+
+        let unavailable = getUnavailable();
+        if (!unavailable.includes(item.bookTitle)) {
+          unavailable.push(item.bookTitle);
+          saveUnavailable(unavailable);
+        }
+
+        alert('Book rental confirmed and saved to database.');
+        renderBooks();
+      } else {
+        alert('Error confirming book: ' + (data.message || 'unknown'));
+      }
+    } catch (err) {
+      alert('Network or server error: ' + err.message);
+    }
+  }
+
+  async function confirmRoom(index) {
+    const rooms = getRooms();
+    const item = rooms[index];
+    if (!item) return alert('Item not found.');
+
+    try {
+      const form = new FormData();
+      form.append('student_id', item.studentId || item.studentID || '');
+      form.append('student_name', item.studentName || '');
+      form.append('course', item.course || '');
+      form.append('year', item.year || '');
+      form.append('room', item.room || '');
+      form.append('date', item.date || '');
+      form.append('time', item.time || '');
+      form.append('issue_date', item.issueDate || (new Date().toISOString().split('T')[0]));
+
+      const res = await fetch('confirm_room.php', { method: 'POST', body: form });
+      const data = await res.json();
+
+      if (data.success) {
+        rooms[index].confirmed = true;
+        saveRooms(rooms);
+        alert('Room booking confirmed and saved to database.');
+        renderRooms();
+      } else {
+        alert('Error confirming room: ' + (data.message || 'unknown'));
+      }
+    } catch (err) {
+      alert('Network or server error: ' + err.message);
+    }
+  }
+
+  function returnBook(index) {
+    const books = getBooks();
+    const title = books[index]?.bookTitle || '';
+
+    if (!title) return;
+
+    if (confirm(`Mark book "${title}" as returned?`)) {
+      let unavailable = getUnavailable();
+      unavailable = unavailable.filter(b => b !== title);
+      saveUnavailable(unavailable);
+
+      books.splice(index, 1);
+      saveBooks(books);
+
+      renderBooks();
+      alert("Book is now available for borrowing again.");
+    }
+  }
+
+  function completeRoom(index) {
+    const rooms = getRooms();
+    if (confirm(`Mark room "${rooms[index].room}" booking completed for ${rooms[index].studentName}?`)) {
+      rooms.splice(index, 1);
+      saveRooms(rooms);
+      renderRooms();
+    }
+  }
+
+  function updateBookAvailability() {
+    const books = getBooks();
+    const unavailableBooks = books
+      .filter(b => b.confirmed)
+      .map(b => b.bookTitle);
+
+    let existing = getUnavailable();
+    unavailableBooks.forEach(title => {
+      if (!existing.includes(title)) existing.push(title);
+    });
+
+    saveUnavailable(existing);
+  }
+
+  renderBooks();
+  renderRooms();
+</script>
+</body>
+</html>

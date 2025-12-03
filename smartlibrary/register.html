@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Library & Room System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .logo {
+      width: 90px;
+      position: absolute;
+      top: 5px;
+      left: 50px;
+    }
+    header {
+      position: relative;
+    }
+
+    body {
+      background-color: #f8f3f3;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #0047ab;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+    }
+
+    header p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .form-container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 350px;
+      text-align: center;
+    }
+
+    .form-container h2 {
+      margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #eee;
+      border-radius: 5px;
+      background-color: #faf5f5;
+    }
+
+    button {
+      background-color: #0047ab;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 500;
+      width: 100%;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #003c91;
+    }
+
+    .login-link {
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      background-color: #0047ab;
+      text-align: center;
+      color: white;
+      padding: 10px 0;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="QCU_Logo.png" class="logo" alt="QCU Logo">
+    <h1>Smart Library & Room System | Quezon City University</h1>
+    <p>Manage your books and room reservation with ease</p>
+  </header>
+
+  <main>
+    <div class="form-container">
+      <h2>Register</h2>
+      <form>
+        <input type="email" placeholder="Email" required />
+        <input type="password" placeholder="Password" required />
+        <input type="password" placeholder="Confirm Password" required />
+        <button onclick="window.location.href='home.html';">Register</button>
+      </form>
+      <div class="login-link">
+        Already have an account? <a href="login.html">Login</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 Smart Library & Room System
+  </footer>
+</body>
+</html>
